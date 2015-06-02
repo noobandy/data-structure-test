@@ -3,11 +3,14 @@
  */
 package org.app.ds.queue;
 
+import java.util.Random;
+
 /**
  * @author anandm
  * 
  */
-public class CircularQueue<T> implements IQueue<T> {
+public class CircularPriorityQueue<T extends Comparable<T>> implements
+		IQueue<T> {
 
 	private static final int DEFAULT_CAPACITY = 10;
 	private Object[] data;
@@ -18,14 +21,14 @@ public class CircularQueue<T> implements IQueue<T> {
 	/**
 	 * 
 	 */
-	public CircularQueue() {
+	public CircularPriorityQueue() {
 		this(DEFAULT_CAPACITY);
 	}
 
 	/**
 	 * 
 	 */
-	public CircularQueue(int capacity) {
+	public CircularPriorityQueue(int capacity) {
 		super();
 		this.capacity = capacity;
 		data = new Object[this.capacity];
@@ -72,7 +75,11 @@ public class CircularQueue<T> implements IQueue<T> {
 			throw new IllegalStateException("Queue is full");
 		}
 
-		data[rear] = e;
+		if (isEmpty()) {
+			data[rear] = e;
+		} else {
+
+		}
 
 		rear = (rear + 1) % capacity;
 
@@ -84,39 +91,15 @@ public class CircularQueue<T> implements IQueue<T> {
 	}
 
 	public static void main(String[] args) {
-		CircularQueue<Integer> queue = new CircularQueue<Integer>(5);
+		CircularPriorityQueue<Integer> queue = new CircularPriorityQueue(5);
+		Random random = new Random();
 
-		System.out.println("Empty : " + queue.isEmpty());
-
-		try {
-			queue.getFront();
-		} catch (IllegalStateException e) {
-			System.out.println("Empty Exception: " + e.getMessage());
+		for (int i = 0; i < 4; i++) {
+			queue.enqueue(random.nextInt() % 4);
 		}
 
-		try {
-			queue.dequeue();
-		} catch (IllegalStateException e) {
-			System.out.println("Empty Exception: " + e.getMessage());
-		}
-
-		for (int i = 0; i < 5; i++) {
-			queue.enqueue(i);
-		}
-
-		System.out.println("Full : " + !queue.isEmpty());
-
-		try {
-			queue.enqueue(6);
-		} catch (IllegalStateException e) {
-			System.out.println("Full Exception: " + e.getMessage());
-		}
-
-		for (int i = 0; i < 5; i++) {
+		while (!queue.isEmpty()) {
 			System.out.println(queue.dequeue());
 		}
-
-		System.out.println("Empty : " + queue.isEmpty());
-
 	}
 }

@@ -58,17 +58,7 @@ public class BloomFilter<E> implements Serializable {
 	// hash values
 	// as strings
 
-	static final String hashName = "MD5"; // MD5 gives good enough accuracy in
-	// most circumstances. Change to
-	// SHA1 if it's needed
-	// static final MessageDigest digestFunction;
-	static { // The digest method is reused between instances
-		/*
-		 * MessageDigest tmp; try { tmp =
-		 * java.security.MessageDigest.getInstance(hashName); } catch
-		 * (NoSuchAlgorithmException e) { tmp = null; } digestFunction = tmp;
-		 */
-	}
+
 
 	/**
 	 * Constructs an empty Bloom filter. The total length of the Bloom filter
