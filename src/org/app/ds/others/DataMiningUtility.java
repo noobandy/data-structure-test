@@ -74,9 +74,16 @@ public final class DataMiningUtility {
 
 		}
 
-		double cofficient = (xySum - ((xSum * ySum) / n))
-				/ (Math.sqrt(xSquareSum - (Math.pow(xSum, 2) / n)) * Math
-						.sqrt(ySquareSum - (Math.pow(ySum, 2) / n)));
+		double numerator = xySum - ((xSum * ySum) / n);
+		double denominator = Math.sqrt(xSquareSum - (Math.pow(xSum, 2) / n))
+				* Math.sqrt(ySquareSum - (Math.pow(ySum, 2) / n));
+
+		double cofficient = 0;
+
+		if ((numerator > 0 || numerator < 0)
+				&& (denominator > 0 || denominator < 0)) {
+			cofficient = numerator / denominator;
+		}
 
 		return cofficient;
 
@@ -114,6 +121,40 @@ public final class DataMiningUtility {
 
 	}
 
+	public static final double adjustedCosineSimilarityCoefficient(
+			double[] uRI, double[] uRJ, double[] uMean) {
+
+		double n = uRI.length;
+
+		double numerator = 0;
+		double denominator = 0;
+
+		double denominatorPartISquareSum = 0;
+		double denominatorPartJSquareSum = 0;
+
+		for (int i = 0; i < n; i++) {
+			double numeratorPartI = uRI[i] - uMean[i];
+			double numeratorPartJ = uRJ[i] - uMean[i];
+
+			numerator = numerator + (numeratorPartI * numeratorPartJ);
+
+			denominatorPartISquareSum = denominatorPartISquareSum
+					+ Math.pow(numeratorPartI, 2);
+
+			denominatorPartJSquareSum = denominatorPartJSquareSum
+					+ Math.pow(numeratorPartJ, 2);
+
+		}
+
+		denominator = Math.sqrt(denominatorPartISquareSum)
+				* Math.sqrt(denominatorPartJSquareSum);
+
+		double cofficient = numerator / denominator;
+
+		return cofficient;
+
+	}
+
 	public static void main(String[] args) {
 		System.out.println(DataMiningUtility.pearsonCorrelationCoefficient(
 				new double[] { 3.5, 2, 5, 1.5, 2 }, new double[] { 2, 3.5, 2,
@@ -122,6 +163,10 @@ public final class DataMiningUtility {
 		System.out.println(DataMiningUtility.cosineSimilarityCoefficient(
 				new double[] { 3.5, 2, 0, 4.5, 5, 1.5, 2.5, 2 }, new double[] {
 						3, 0, 0, 5, 4, 2.5, 3, 0 }));
-	}
 
+		System.out.println(DataMiningUtility
+				.adjustedCosineSimilarityCoefficient(new double[] { 4, 4, 5 },
+						new double[] { 1, 1, 3 }, new double[] { 2.75, 3.2,
+								4.25 }));
+	}
 }
