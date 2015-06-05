@@ -155,6 +155,37 @@ public final class DataMiningUtility {
 
 	}
 
+	public static final double normalize(double value, double min, double max) {
+
+		double normalized = ((2 * (value - min)) - (max - min)) / (max - min);
+
+		return normalized;
+	}
+
+	public static final double deNormalize(double normalized, double min,
+			double max) {
+
+		double value = (((normalized + 1) * (max - min)) / 2) + min;
+
+		return value;
+	}
+
+	public static final double projectedSimilarityRating(double[] similarities,
+			double[] ratings) {
+
+		double numerator = 0;
+		double denominator = 0;
+
+		for (int i = 0; i < ratings.length; i++) {
+			numerator = numerator + (similarities[i] * ratings[i]);
+			denominator = denominator + Math.abs(similarities[i]);
+		}
+
+		double projectedRating = numerator / denominator;
+
+		return projectedRating;
+	}
+
 	public static void main(String[] args) {
 		System.out.println(DataMiningUtility.pearsonCorrelationCoefficient(
 				new double[] { 3.5, 2, 5, 1.5, 2 }, new double[] { 2, 3.5, 2,
