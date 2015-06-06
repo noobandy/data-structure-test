@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 public class Recommender {
 
@@ -43,7 +44,7 @@ public class Recommender {
 		String line = null;
 
 		while ((line = bufferedReader.readLine()) != null) {
-			String[] tokens = line.split("|");
+			String[] tokens = line.split(Pattern.quote("|"));
 			String id = tokens[0].trim();
 			String title = tokens[1].trim();
 
@@ -61,7 +62,7 @@ public class Recommender {
 		String line = null;
 
 		while ((line = bufferedReader.readLine()) != null) {
-			String[] tokens = line.split("|");
+			String[] tokens = line.split(Pattern.quote("|"));
 			String id = tokens[0].trim();
 
 			users.put(id, new User(id));
