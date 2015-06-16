@@ -3,6 +3,8 @@
  */
 package org.app.ds.others;
 
+import java.util.Arrays;
+
 /**
  * @author anandm
  * 
@@ -186,6 +188,82 @@ public final class DataMiningUtility {
 		return projectedRating;
 	}
 
+	public static final double mean(double[] values) {
+
+		double sum = 0.0;
+
+		for (double value : values) {
+			sum = sum + value;
+		}
+
+		double mean = (sum / values.length);
+
+		return mean;
+	}
+
+	public static final double standardDeviation(double[] values, double mean) {
+		double dSquareSum = 0.0;
+
+		for (double value : values) {
+			dSquareSum = (dSquareSum + Math.pow((value - mean), 2));
+		}
+
+		double sd = Math.sqrt(dSquareSum / values.length);
+
+		return sd;
+	}
+
+	public static final double[] standardScore(double[] values, double mean,
+			double standardDeviation) {
+		double standardScores[] = new double[values.length];
+
+		for (int i = 0; i < values.length; i++) {
+			standardScores[i] = ((values[i] - mean) / standardDeviation);
+		}
+
+		return standardScores;
+
+	}
+
+	public static final double median(double[] values) {
+		double[] internalCopy = Arrays.copyOf(values, values.length);
+		Arrays.sort(internalCopy);
+		double median;
+		int middle = internalCopy.length / 2;
+		if (internalCopy.length % 2 == 0) { // even
+			median = (internalCopy[middle - 1] + internalCopy[middle]) / 2;
+		} else { // odd
+			median = internalCopy[middle];
+		}
+
+		return median;
+	}
+
+	public static final double absoluteStandardDeviation(double[] values,
+			double median) {
+		double dSum = 0.0;
+
+		for (double value : values) {
+			dSum = dSum + Math.abs(value - median);
+		}
+
+		double asd = dSum / values.length;
+
+		return asd;
+	}
+
+	public static final double[] modifiedStandardScore(double[] values,
+			double median, double absoluteStandardDeviation) {
+		double standardScores[] = new double[values.length];
+
+		for (int i = 0; i < values.length; i++) {
+			standardScores[i] = ((values[i] - median) / absoluteStandardDeviation);
+		}
+
+		return standardScores;
+
+	}
+
 	public static void main(String[] args) {
 		System.out.println(DataMiningUtility.pearsonCorrelationCoefficient(
 				new double[] { 3.5, 2, 5, 1.5, 2 }, new double[] { 2, 3.5, 2,
@@ -199,5 +277,23 @@ public final class DataMiningUtility {
 				.adjustedCosineSimilarityCoefficient(new double[] { 4, 4, 5 },
 						new double[] { 1, 1, 3 }, new double[] { 2.75, 3.2,
 								4.25 }));
+
+		double[] values = { 75000, 55000, 45000, 115000, 70000, 105000, 69000,
+				43000 };
+		double median = DataMiningUtility.median(values);
+		double asd = DataMiningUtility
+				.absoluteStandardDeviation(values, median);
+
+		System.out.println(Arrays.toString(DataMiningUtility
+				.modifiedStandardScore(values, median, asd)));
+
+		double[] playCounts = { 21, 15, 12, 3, 7 };
+		double medianPlayCounts = DataMiningUtility.median(playCounts);
+		double asdPlayCounts = DataMiningUtility.absoluteStandardDeviation(
+				playCounts, medianPlayCounts);
+
+		System.out.println(Arrays.toString(DataMiningUtility
+				.modifiedStandardScore(playCounts, medianPlayCounts,
+						asdPlayCounts)));
 	}
 }
