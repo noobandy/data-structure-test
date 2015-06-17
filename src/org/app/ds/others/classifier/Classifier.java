@@ -2,16 +2,13 @@
  * @filenameName:org.app.ds.others.classifier.Classifier.java
  * @description:TODO
  * @author anandm
- * @date Jun 16, 2015 12:37:33 PM
+ * @date Jun 17, 2015 10:54:03 AM
  * @version: TODO
  */
 package org.app.ds.others.classifier;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,21 +18,19 @@ import org.app.ds.others.DataMiningUtility;
  * @className:org.app.ds.others.classifier.Classifier.java
  * @description:TODO
  * @author anandm
- * @date Jun 16, 2015 12:37:33 PM
+ * @date Jun 17, 2015 10:54:03 AM
  */
-public class Classifier {
+public class Classifier implements IClassifier {
 
     /**
-     * 
+     * @className:org.app.ds.others.classifier.Classifier.java
+     * @description:TODO
+     * @author anandm
+     * @date Jun 17, 2015 11:05:41 AM
      */
-    public Classifier() {
-        super();
-
-    }
-
     private class ItemDistance implements Comparable<ItemDistance> {
 
-        private Item item;
+        private IItem item;
 
         private double distance;
 
@@ -43,7 +38,7 @@ public class Classifier {
          * @param item
          * @param distance
          */
-        public ItemDistance(Item item, double distance) {
+        public ItemDistance(IItem item, double distance) {
             super();
             this.item = item;
             this.distance = distance;
@@ -61,83 +56,123 @@ public class Classifier {
 
             return Double.compare(distance, o.distance);
         }
+
     }
 
-    private Item nearestNeighbour(Item item, Item[] items) {
-        List<ItemDistance> itemDistances = new ArrayList<Classifier.ItemDistance>(
-                items.length);
+    private boolean standardizeFeatureVectors;
 
-        for (int i = 0; i < items.length; i++) {
-            itemDistances.add(new ItemDistance(items[i], DataMiningUtility
-                    .manhattanDistance(
-                            item.getFeatureVector(),
-                            items[i].getFeatureVector())));
+    private Collection<? extends IItem> items;
+
+    private double[][] medianAndAsd;
+
+    /**
+     * 
+     */
+    public Classifier() {
+        this(false);
+
+    }
+
+    /**
+     * @param standardizeFeatureVectors
+     */
+    public Classifier(boolean standardizeFeatureVectors) {
+        super();
+        this.standardizeFeatureVectors = standardizeFeatureVectors;
+        this.items = Collections.emptyList();
+    }
+
+    private void _standardizeFeatureVectors() {
+        boolean ready = false;
+        int noOfColumns = 0;
+        for (IItem item : items) {
+            if (ready) {
+
+                break;
+            }
+            else {
+                ready = true;
+                noOfColumns = item.getFeatureVector().length;
+            }
+        }
+        medianAndAsd = new double[noOfColumns][2];
+
+        for (int i = 0; i < noOfColumns; i++) {
+            double[] values = new double[items.size()];
+            int j = 0;
+            for (IItem item : items) {
+                values[j++] = item.getFeatureVector()[i];
+            }
+
+            double median = DataMiningUtility.median(values);
+            double asd = DataMiningUtility.absoluteStandardDeviation(
+                    values, median);
+
+            medianAndAsd[i][0] = median;
+            medianAndAsd[i][1] = asd;
+
+            double[] standardizedValues = DataMiningUtility
+                    .modifiedStandardScore(values, median, asd);
+
+            j = 0;
+            for (IItem item : items) {
+                item.getFeatureVector()[i] = standardizedValues[j++];
+            }
+        }
+    }
+
+    private IItem _nearestNeighbour(double[] featureVector) {
+
+        List<ItemDistance> itemDistances = new ArrayList<ItemDistance>(
+                items.size());
+
+        for (IItem item : items) {
+            ItemDistance itemDistance = new ItemDistance(item,
+                    DataMiningUtility.manhattanDistance(
+                            featureVector, item.getFeatureVector()));
+            itemDistances.add(itemDistance);
         }
 
         Collections.sort(itemDistances);
 
         return itemDistances.get(0).item;
-
     }
 
-    public boolean classify(User user, Item item, Item[] items) {
-        boolean mayLike = false;
-
-        Item nearestNeighbour = nearestNeighbour(item, items);
-
-        String[] likedItems = Arrays.copyOf(
-                user.getLikedItemIds(), user.getLikedItemIds().length);
-
-        Arrays.sort(likedItems);
-
-        if (Arrays.binarySearch(likedItems, nearestNeighbour.getId()) >= 0) {
-            mayLike = true;
-
+    /**
+     * @methodName:Classifier.java.trainClassifier
+     * @description:TODO
+     * @author anandm
+     * @param trainingData
+     */
+    @Override
+    public void trainClassifier(Collection<? extends IItem> trainingData) {
+        this.items = trainingData;
+        if (standardizeFeatureVectors) {
+            _standardizeFeatureVectors();
         }
-        return mayLike;
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        Classifier classifier = new Classifier();
+    /**
+     * @methodName:Classifier.java.classify
+     * @description:TODO
+     * @author anandm
+     * @param featureVector
+     * @return
+     */
+    @Override
+    public String classify(double[] featureVector) {
 
-        System.out.println(classifier.classify(
-                new User("Angelica", new String[] { "Dr Dog/Fate",
-                        "Phoenix/Lisztomania", "Glee Cast/Jessie's Girl",
-                        "Lady Gaga/Alejandro" }, new String[] {
-                        "Heartless Bastards/Out at Sea",
-                        "Todd Snider/Don't Tempt Me",
-                        "The Black Keys/Magic Potion", "La Roux/Bulletproof",
-                        "Black Eyed Peas/Rock That Body", "Mike Posner" }),
-                new Item("Chris Cagle/ I Breathe In. I Breathe Out",
-                        new double[] { 1, 5, 2.5, 1, 1, 5, 1 }), new Item[] {
-                        new Item("Dr Dog/Fate", new double[] { 2.5, 4, 3.5, 3,
-                                5, 4, 1 }),
-                        new Item("Phoenix/Lisztomania", new double[] { 2, 5, 5,
-                                3, 2, 1, 1 }),
-                        new Item("Heartless Bastards/Out at Sea", new double[] {
-                                1, 5, 4, 2, 4, 1, 1 }),
-                        new Item("Todd Snider/Don't Tempt Me", new double[] {
-                                4, 5, 4, 4, 1, 5, 1 }),
-                        new Item("The Black Keys/Magic Potion", new double[] {
-                                1, 4, 5, 3.5, 5, 1, 1 }),
-                        new Item("Glee Cast/Jessie's Girl", new double[] { 1,
-                                5, 3.5, 3, 4, 5, 1 }),
-                        new Item("La Roux/Bulletproof", new double[] { 5, 5, 4,
-                                2, 1, 1, 1 }),
-                        new Item("Mike Posner", new double[] { 2.5, 4, 4, 1, 1,
-                                1, 1 }),
-                        new Item("Black Eyed Peas/Rock That Body",
-                                new double[] { 2, 5, 5, 1, 2, 2, 4 }),
-                        new Item("Lady Gaga/Alejandro", new double[] { 1, 5, 3,
-                                2, 1, 2, 1 }) }));
+        if (standardizeFeatureVectors) {
+            // standardize feature vector
+            for (int i = 0; i < featureVector.length; i++) {
+                featureVector[i] = (featureVector[i] - medianAndAsd[i][0])
+                        / medianAndAsd[i][1];
+            }
+        }
 
-        //
+        IItem nearestNeighbour = _nearestNeighbour(featureVector);
 
-        List<Item> sportItems = new ArrayList<Item>();
-
-        Item itemToClassify = new Item();
-
-        BufferedReader reader = new BufferedReader(new FileReader(""));
-
+        return nearestNeighbour.getItemClass();
     }
+
 }

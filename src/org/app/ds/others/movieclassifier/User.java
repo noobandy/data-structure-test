@@ -5,7 +5,7 @@
  * @date Jun 16, 2015 12:35:31 PM
  * @version: TODO
  */
-package org.app.ds.others.classifier;
+package org.app.ds.others.movieclassifier;
 
 
 /**
