@@ -32,12 +32,17 @@ public class MovieClassifier {
         classifier = new Classifier();
     }
 
-    public boolean prdictIfUserMayLike(User user, double[] featureVecotor, Movie[] items) {
+    public boolean prdictIfUserMayLike(User user,
+                                       double[] featureVecotor,
+                                       Movie[] items) {
         boolean mayLike = false;
 
         Collection<Movie> movies = Arrays.asList(items);
 
-        classifier.trainClassifier(movies);
+        for (Movie movie : movies) {
+            classifier.trainClassifier(
+                    movie.getItemClass(), movie.getFeatureVector());
+        }
 
         String itemClass = classifier.classify(featureVecotor);
 

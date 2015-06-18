@@ -7,7 +7,6 @@
  */
 package org.app.ds.others.classifier;
 
-import java.util.Collection;
 
 /**
  * @className:org.app.ds.others.classifier.IClassifier.java
@@ -17,8 +16,10 @@ import java.util.Collection;
  */
 public interface IClassifier {
 
-    void trainClassifier(Collection<? extends IItem> trainingData);
+    void trainClassifier(String itemClass, double[] featureVector);
 
     String classify(double[] featureVector);
+
+    String classify(double[] featureVector, int k);
 
 }

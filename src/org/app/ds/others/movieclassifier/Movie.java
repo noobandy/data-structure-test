@@ -7,7 +7,6 @@
  */
 package org.app.ds.others.movieclassifier;
 
-import org.app.ds.others.classifier.IItem;
 
 /**
  * @className:org.app.ds.others.classifier.Item.java
@@ -15,7 +14,7 @@ import org.app.ds.others.classifier.IItem;
  * @author anandm
  * @date Jun 16, 2015 12:32:49 PM
  */
-public class Movie implements IItem {
+public class Movie {
 
     private String itemClass;
 
@@ -37,7 +36,7 @@ public class Movie implements IItem {
      * @author anandm
      * @return
      */
-    @Override
+
     public String getItemClass() {
 
         return itemClass;
@@ -49,7 +48,7 @@ public class Movie implements IItem {
      * @author anandm
      * @return
      */
-    @Override
+
     public double[] getFeatureVector() {
 
         return featureVector;
