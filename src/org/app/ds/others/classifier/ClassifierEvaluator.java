@@ -79,7 +79,7 @@ public abstract class ClassifierEvaluator {
         int bucketSize = totalItems / 10;
 
         for (int i = 0; i < 10; i++) {
-
+            int filled = 0;
             for (Entry<String, List<Item>> entry : itemMap.entrySet()) {
 
             }

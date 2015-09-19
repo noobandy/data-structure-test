@@ -8,107 +8,124 @@ import java.util.Set;
 
 public class Utils {
 
-	public interface IPredicate<T> {
-		boolean matches(T element);
-	}
+    public interface IPredicate<T> {
 
-	public static final <T> T getT(T a1, T a2) {
-		return a2;
-	}
+        boolean matches(T element);
+    }
 
-	public static final Object getSecondT(List<? super Number> arg) {
+    public static final <T> T getT(T a1, T a2) {
+        return a2;
+    }
 
-		return arg.get(0);
+    public static final Object getSecondT(List<? super Number> arg) {
 
-	}
+        return arg.get(0);
 
-	public static final <T> int countMatching(Collection<T> collection,
-			IPredicate<T> predicate) {
-		int count = 0;
-		for (T t : collection) {
-			if (predicate.matches(t)) {
-				count++;
-			}
-		}
-		return count;
-	}
+    }
 
-	public static final <T> void swap(T[] data, int pos1, int pos2) {
-		T temp = data[pos1];
-		data[pos1] = data[pos2];
-		data[pos1] = temp;
-	}
+    public static final <T> int countMatching(Collection<T> collection,
+                                              IPredicate<T> predicate) {
+        int count = 0;
+        for (T t : collection) {
+            if (predicate.matches(t)) {
+                count++;
+            }
+        }
+        return count;
+    }
 
-	public static final <T extends Comparable<T>> T max(T[] data, int beg,
-			int end) {
+    public static final <T> void swap(T[] data, int pos1, int pos2) {
+        T temp = data[pos1];
+        data[pos1] = data[pos2];
+        data[pos1] = temp;
+    }
 
-		T max = null;
+    public static final <T extends Comparable<T>> T max(T[] data,
+                                                        int beg,
+                                                        int end) {
 
-		for (int i = beg; i < end; i++) {
-			T t = data[i];
-			if (max == null) {
-				max = t;
-			} else {
-				if (max.compareTo(t) < 0) {
-					max = t;
-				}
-			}
-		}
-		return max;
-	}
+        T max = null;
 
-	public static final <T extends Comparable<T>> void swapFirst(
-			List<T> listOne, List<T> listTwo) {
-		T temp = listOne.get(0);
-		listOne.set(0, listTwo.get(0));
-		listTwo.set(0, temp);
-	}
+        for (int i = beg; i < end; i++) {
+            T t = data[i];
+            if (max == null) {
+                max = t;
+            }
+            else {
+                if (max.compareTo(t) < 0) {
+                    max = t;
+                }
+            }
+        }
+        return max;
+    }
 
-	public static void main(String[] args) {
-		Utils.getT("anand", 1);
+    public static final <T extends Comparable<T>> void swapFirst(List<T> listOne,
+                                                                 List<T> listTwo) {
+        T temp = listOne.get(0);
+        listOne.set(0, listTwo.get(0));
+        listTwo.set(0, temp);
+    }
 
-		//Utils.getSecondT(new ArrayList<Object>());
+    public static final void removeAll(Collection<?> collection,
+                                       Collection<?> removals) {
+        for (Object obj : removals) {
+            collection.remove(obj);
+        }
+    }
 
-		List<Number> ln = new ArrayList<Number>();
+    public static final <E> void addAll(Collection<? super E> collection,
+                                        Collection<? extends E> additions) {
+        for (E obj : additions) {
+            collection.add(obj);
+        }
+    }
 
-		List<Integer> li = new ArrayList<Integer>();
+    public static void main(String[] args) {
+        Utils.getT("anand", 1);
 
-		// ln = li;
+        // Utils.getSecondT(new ArrayList<Object>());
 
-		System.out.println(Utils.max(new Integer[] { 50, 30, 70, 20, 40, 90 }, 0, 3));
-		
-		List<A> list = new ArrayList<A>();
-		list.add(new B());
-		Process process = new Process();
-		process.process(list);
-		
-		List<B> bs = new ArrayList<B>();
-		
-		bs.add(new B());
-		
-		process.process(bs);
-		
-		
-		Set<Integer> source = new HashSet<Integer>();
-		List<Integer> removal = new ArrayList<Integer>();
-	}
+        List<Number> ln = new ArrayList<Number>();
+
+        List<Integer> li = new ArrayList<Integer>();
+
+        // ln = li;
+
+        System.out.println(Utils.max(
+                new Integer[] { 50, 30, 70, 20, 40, 90 }, 0, 3));
+
+        List<A> list = new ArrayList<A>();
+        list.add(new B());
+        Process process = new Process();
+        process.process(list);
+
+        List<B> bs = new ArrayList<B>();
+
+        bs.add(new B());
+
+        process.process(bs);
+
+        Set<Integer> source = new HashSet<Integer>();
+        List<Integer> removal = new ArrayList<Integer>();
+    }
 }
 
 class A {
-	
+
 }
 
 class B extends A {
-	
+
 }
 
 class C extends A {
-	
+
 }
 
 class Process {
-	
-	public void process(List<? extends A> list) {
-		
-	}
+
+    public void process(List<? extends A> list) {
+
+    }
 }
