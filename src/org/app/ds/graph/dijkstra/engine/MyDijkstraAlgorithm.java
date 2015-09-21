@@ -5,11 +5,14 @@ package org.app.ds.graph.dijkstra.engine;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 
 import org.app.ds.graph.dijkstra.model.Edge;
@@ -20,100 +23,81 @@ import org.app.ds.graph.dijkstra.model.Vertex;
  * @author anandm
  * 
  */
-public class DijkstraAlgorithm {
+public class MyDijkstraAlgorithm {
 
     private final List<Edge> edges;
 
-    private Set<Vertex> settledNodes;
+    private Set<Vertex> settledNodes = new HashSet<Vertex>();
 
-    private Set<Vertex> unSettledNodes;
+    private Map<Vertex, Vertex> predecessors = new HashMap<Vertex, Vertex>();
 
-    private Map<Vertex, Vertex> predecessors;
+    private Map<Vertex, Integer> distance = new HashMap<Vertex, Integer>();
 
-    private Map<Vertex, Integer> distance;
-
-    public DijkstraAlgorithm(Graph graph) {
+    public MyDijkstraAlgorithm(Graph graph) {
         this.edges = new ArrayList<Edge>(graph.getEdges());
     }
 
     public void execute(Vertex source) {
-        settledNodes = new HashSet<Vertex>();
-        unSettledNodes = new HashSet<Vertex>();
-        distance = new HashMap<Vertex, Integer>();
-        predecessors = new HashMap<Vertex, Vertex>();
+        Queue<Edge> edges = new PriorityQueue<Edge>(10, new Comparator<Edge>() {
+
+            @Override
+            public int compare(Edge o1, Edge o2) {
+
+                return o1.getWeight() - o2.getWeight();
+            }
+        });
+
+        settledNodes.add(source);
         distance.put(source, 0);
-        unSettledNodes.add(source);
-        while (unSettledNodes.size() > 0) {
-            Vertex node = getMinimum(unSettledNodes);
-            settledNodes.add(node);
-            unSettledNodes.remove(node);
-            findMinimalDistances(node);
-        }
-    }
 
-    private void findMinimalDistances(Vertex node) {
-        List<Vertex> adjacentNodes = getNeighbors(node);
-        for (Vertex target : adjacentNodes) {
-            if (getShortestDistance(target) > getShortestDistance(node)
-                    + getDistance(node, target)) {
-                distance.put(
-                        target,
-                        getShortestDistance(node) + getDistance(node, target));
-                predecessors.put(target, node);
-                unSettledNodes.add(target);
+        for (Edge edge : getNeighbors(source)) {
+            predecessors.put(edge.getDestination(), source);
+            distance.put(edge.getDestination(), edge.getWeight());
+
+            edges.add(edge);
+        }
+
+        while (!edges.isEmpty()) {
+            Edge edge = edges.remove();
+
+            List<Edge> neighbours = getNeighbors(edge.getDestination());
+
+            for (Edge neighbour : neighbours) {
+                if (!settledNodes.contains(neighbour.getDestination())) {
+                    if (distance.get(neighbour.getDestination()) == null) {
+                        distance.put(
+                                neighbour.getDestination(), edge.getWeight());
+                        predecessors.put(
+                                neighbour.getDestination(), edge.getSource());
+                    }
+                    else {
+                        if (distance.get(neighbour.getDestination())
+                                + edge.getWeight() < distance.get(neighbour
+                                .getDestination())) {
+                            distance.put(
+                                    neighbour.getDestination(),
+                                    distance.get(neighbour.getDestination())
+                                            + edge.getWeight());
+                            predecessors.put(
+                                    neighbour.getDestination(),
+                                    edge.getSource());
+                        }
+                    }
+                }
+                settledNodes.add(edge.getSource());
             }
-        }
 
+        }
     }
 
-    private int getDistance(Vertex node, Vertex target) {
+    private List<Edge> getNeighbors(Vertex node) {
+        List<Edge> neighbors = new ArrayList<Edge>();
         for (Edge edge : edges) {
-            if (edge.getSource().equals(node)
-                    && edge.getDestination().equals(target)) {
-                return edge.getWeight();
-            }
-        }
-        throw new RuntimeException("Should not happen");
-    }
-
-    private List<Vertex> getNeighbors(Vertex node) {
-        List<Vertex> neighbors = new ArrayList<Vertex>();
-        for (Edge edge : edges) {
-            if (edge.getSource().equals(node)
-                    && !isSettled(edge.getDestination())) {
-                neighbors.add(edge.getDestination());
+            if (edge.getSource().equals(node)) {
+                neighbors.add(edge);
             }
         }
         return neighbors;
-    }
-
-    private Vertex getMinimum(Set<Vertex> vertexes) {
-        Vertex minimum = null;
-        for (Vertex vertex : vertexes) {
-            if (minimum == null) {
-                minimum = vertex;
-            }
-            else {
-                if (getShortestDistance(vertex) < getShortestDistance(minimum)) {
-                    minimum = vertex;
-                }
-            }
-        }
-        return minimum;
-    }
-
-    private boolean isSettled(Vertex vertex) {
-        return settledNodes.contains(vertex);
-    }
-
-    private int getShortestDistance(Vertex destination) {
-        Integer d = distance.get(destination);
-        if (d == null) {
-            return Integer.MAX_VALUE;
-        }
-        else {
-            return d;
-        }
     }
 
     /*
@@ -211,7 +195,7 @@ public class DijkstraAlgorithm {
 
         Graph graph = new Graph(vertexs, edges);
 
-        DijkstraAlgorithm algorithm = new DijkstraAlgorithm(graph);
+        MyDijkstraAlgorithm algorithm = new MyDijkstraAlgorithm(graph);
 
         algorithm.execute(s);
 
