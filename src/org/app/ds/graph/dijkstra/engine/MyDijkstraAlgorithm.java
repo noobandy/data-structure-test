@@ -175,9 +175,9 @@ public class MyDijkstraAlgorithm {
 
         MyDijkstraAlgorithm algorithm = new MyDijkstraAlgorithm(graph);
 
-        algorithm.execute(D);
+        algorithm.execute(A);
 
-        List<Vertex> path = algorithm.getPath(A);
+        List<Vertex> path = algorithm.getPath(E);
 
         for (Vertex v : path) {
             System.out.println(v.getName());
