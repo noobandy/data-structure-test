@@ -2,12 +2,11 @@ package org.app.ds.graph.bellmanford;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -62,13 +61,7 @@ public class BellManFordAlgorithm {
 
         boolean distanceChanged = false;
 
-        Queue<Edge> queue = new PriorityQueue<Edge>(10, new Comparator<Edge>() {
-
-            @Override
-            public int compare(Edge o1, Edge o2) {
-                return o1.getWeight() - o2.getWeight();
-            }
-        });
+        Queue<Edge> queue = new LinkedList<Edge>();
 
         visited.add(source);
         distance.put(source, 0);
@@ -86,8 +79,6 @@ public class BellManFordAlgorithm {
 
                 }
             }
-
-            distance.put(edge.getDestination(), edge.getWeight());
             queue.add(edge);
         }
 
@@ -204,16 +195,16 @@ public class BellManFordAlgorithm {
         edges.add(AC);
         edges.add(AD);
         edges.add(AE);
-        edges.add(BA);
+        // edges.add(BA);
         // edges.add(BD);
-        edges.add(CA);
+        // edges.add(CA);
         edges.add(CE);
         // edges.add(DA);
         edges.add(DB);
         edges.add(DE);
-        edges.add(EA);
-        edges.add(EC);
-        edges.add(ED);
+        // edges.add(EA);
+        // edges.add(EC);
+        // edges.add(ED);
 
         Graph graph = new Graph(vertexes, edges);
 
@@ -221,7 +212,7 @@ public class BellManFordAlgorithm {
 
         algorithm.execute(A);
 
-        List<Vertex> path = algorithm.path(D);
+        List<Vertex> path = algorithm.path(B);
 
         for (Vertex v : path) {
             System.out.println(v.getName());
