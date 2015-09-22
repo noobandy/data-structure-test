@@ -138,88 +138,68 @@ public class DijkstraAlgorithm {
     }
 
     public static void main(String[] args) {
-        List<Vertex> vertexs = new ArrayList<Vertex>();
-        Vertex s = new Vertex("s", "s");
+        Vertex A = new Vertex("A", "A");
+        Vertex B = new Vertex("B", "B");
+        Vertex C = new Vertex("C", "C");
+        Vertex D = new Vertex("D", "D");
+        Vertex E = new Vertex("E", "E");
 
-        Vertex a = new Vertex("a", "a");
-        Vertex b = new Vertex("b", "b");
-        Vertex c = new Vertex("c", "c");
-        Vertex d = new Vertex("d", "d");
-        Vertex e = new Vertex("e", "e");
-        Vertex f = new Vertex("f", "f");
-        Vertex g = new Vertex("g", "g");
+        List<Vertex> vertexes = new ArrayList<Vertex>();
 
-        vertexs.add(s);
-        vertexs.add(a);
-        vertexs.add(b);
-        vertexs.add(c);
-        vertexs.add(d);
-        vertexs.add(e);
-        vertexs.add(f);
-        vertexs.add(g);
+        vertexes.add(A);
+        vertexes.add(B);
+        vertexes.add(C);
+        vertexes.add(D);
+        vertexes.add(E);
+
+        Edge AB = new Edge("AB", A, B, 5);
+        Edge AC = new Edge("AC", A, C, 8);
+        Edge AD = new Edge("AD", A, D, 10);
+        Edge AE = new Edge("AE", A, E, 16);
+
+        Edge BA = new Edge("BA", B, A, 5);
+        Edge CA = new Edge("CA", C, A, 8);
+        Edge DA = new Edge("DA", D, A, 10);
+        Edge EA = new Edge("EA", E, A, 16);
+
+        Edge BD = new Edge("BD", B, D, 6);
+        Edge DB = new Edge("DB", D, B, 6);
+
+        Edge CE = new Edge("CE", C, E, 7);
+        Edge EC = new Edge("EC", E, C, 7);
+
+        Edge DE = new Edge("DE", D, E, 14);
+        Edge ED = new Edge("ED", E, D, 14);
 
         List<Edge> edges = new ArrayList<Edge>();
 
-        Edge sa = new Edge("sa", s, a, 5);
-        Edge sb = new Edge("sb", s, b, 10);
-        Edge sc = new Edge("sc", s, c, 4);
-        Edge sd = new Edge("sd", s, d, 5);
+        edges.add(AB);
+        edges.add(AC);
+        edges.add(AD);
+        edges.add(AE);
+        edges.add(BA);
+        edges.add(BD);
+        edges.add(CA);
+        edges.add(CE);
+        edges.add(DA);
+        edges.add(DB);
+        edges.add(DE);
+        edges.add(EA);
+        edges.add(EC);
+        edges.add(ED);
 
-        Edge as = new Edge("as", a, s, 5);
-        Edge bs = new Edge("bs", b, s, 10);
-        Edge cs = new Edge("cs", c, s, 4);
-        Edge ds = new Edge("ds", d, s, 5);
-
-        Edge ae = new Edge("ae", a, e, 5);
-        Edge af = new Edge("af", a, f, 10);
-        Edge ab = new Edge("ab", a, b, 4);
-
-        Edge ea = new Edge("ea", e, a, 5);
-        Edge fa = new Edge("fa", f, a, 10);
-        Edge ba = new Edge("ba", b, a, 4);
-
-        Edge dc = new Edge("dc", d, c, 4);
-        Edge dg = new Edge("dg", d, g, 10);
-
-        Edge cd = new Edge("cd", c, d, 4);
-        Edge gd = new Edge("gd", g, g, 10);
-
-        Edge ef = new Edge("ef", e, f, 6);
-
-        Edge fe = new Edge("fe", f, e, 6);
-
-        edges.add(fe);
-        edges.add(ef);
-        edges.add(ea);
-        edges.add(ae);
-        edges.add(gd);
-        edges.add(cd);
-        edges.add(dg);
-        edges.add(dc);
-        edges.add(ba);
-        edges.add(fa);
-        edges.add(ab);
-        edges.add(af);
-        edges.add(ds);
-        edges.add(cs);
-        edges.add(bs);
-        edges.add(as);
-        edges.add(sd);
-        edges.add(sc);
-        edges.add(sb);
-        edges.add(sa);
-
-        Graph graph = new Graph(vertexs, edges);
+        Graph graph = new Graph(vertexes, edges);
 
         DijkstraAlgorithm algorithm = new DijkstraAlgorithm(graph);
 
-        algorithm.execute(s);
+        algorithm.execute(A);
 
-        List<Vertex> path = algorithm.getPath(b);
+        List<Vertex> path = algorithm.getPath(E);
 
-        for (Vertex vertex : path) {
-            System.out.println(vertex.getId());
+        for (Vertex v : path) {
+            System.out.println(v.getName());
         }
 
     }
+
 }
