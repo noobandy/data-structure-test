@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
 /**
@@ -8,49 +11,54 @@ import java.util.Scanner;
 
 public class MSTEP1 {
 
-    public void run() {
-        Scanner scanner = new Scanner(System.in);
-        int T = scanner.nextInt();
+    public void run() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        int T = Integer.parseInt(reader.readLine());
 
         for (int i = 0; i < T; i++) {
-            int N = scanner.nextInt();
-            String[] matrix = new String[N * N];
+            int N = Integer.parseInt(reader.readLine().trim());
+            int[] matrix = new int[N * N];
             for (int j = 0; j < N; j++) {
-                for (int k = 0; k < N; k++) {
-                    int number = scanner.nextInt();
-                    matrix[number - 1] = new StringBuilder().append(j)
-                            .append(",").append(k).toString();
+                String[] inputs = reader.readLine().split("\\s");
+                for (int k = 0; k < inputs.length; k++) {
+                    int number = Integer.parseInt(inputs[k]);
+                    matrix[number - 1] = (j * N ) + k;
                 }
             }
 
-            int steps = steps(matrix);
+
+            int steps = steps(N,matrix);
 
             System.out.println(steps);
         }
 
     }
 
-    private int steps(String[] matrix) {
+    private int steps(int N ,int[] matrix) {
         int steps = 0;
 
-        String[] startCoordinates = matrix[0].split(",");
+        int startX = matrix[0] / N;
+        int startY = matrix[0] % N;
 
         for (int i = 1; i < matrix.length; i++) {
-            String[] endCoordinates = matrix[i].split(",");
+            int destinationX = matrix[i] / N;
+            int destinationY = matrix[i] % N;
+
+
 
             steps = steps
-                    + Math.abs(Integer.valueOf(startCoordinates[0])
-                            - Integer.valueOf(endCoordinates[0]))
-                    + Math.abs(Integer.valueOf(startCoordinates[1])
-                            - Integer.valueOf(endCoordinates[1]));
+                    + Math.abs(startX - destinationX)
+                    + Math.abs(startY - destinationY);
 
-            startCoordinates = endCoordinates;
+            startX = destinationX;
+            startY = destinationY;
         }
 
         return steps;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         MSTEP1 main = new MSTEP1();
         main.run();
     }
