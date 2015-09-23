@@ -3,12 +3,8 @@ package org.app.ds.graph.bellmanford;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
 
 import org.app.ds.graph.dijkstra.model.Edge;
 import org.app.ds.graph.dijkstra.model.Graph;
@@ -31,8 +27,6 @@ public class BellManFordAlgorithm {
 
     private Map<Vertex, Integer> distance = new HashMap<Vertex, Integer>();
 
-    private Set<Vertex> visited = new HashSet<Vertex>();
-
     /**
      * 
      */
@@ -44,73 +38,40 @@ public class BellManFordAlgorithm {
     }
 
     public void execute(Vertex source) {
-        boolean last = false;
 
+        distance.put(source, 0);
+        predecessors.put(source, null);
+
+        boolean last = false;
         for (int i = 0; i < vertexs.size(); i++) {
             if (i == vertexs.size() - 1) {
                 last = true;
             }
 
-            _execute(source, last);
+            _execute(last);
         }
     }
 
-    private void _execute(Vertex source, boolean last) {
-        // reset visited
-        visited = new HashSet<Vertex>();
+    private void _execute(boolean last) {
 
         boolean distanceChanged = false;
 
-        Queue<Edge> queue = new LinkedList<Edge>();
-
-        visited.add(source);
-        distance.put(source, 0);
-
-        for (Edge edge : neighbours(source)) {
+        for (Edge edge : edges) {
             if (distance.get(edge.getDestination()) == null) {
-                predecessors.put(edge.getDestination(), source);
-                distance.put(edge.getDestination(), edge.getWeight());
+                distance.put(
+                        edge.getDestination(), distance.get(edge.getSource())
+                                + edge.getWeight());
+                predecessors.put(edge.getDestination(), edge.getSource());
             }
             else {
-                if (distance.get(edge.getDestination()) > edge.getWeight()) {
-                    distance.put(edge.getDestination(), edge.getWeight());
-                    predecessors.put(edge.getDestination(), source);
+                if (distance.get(edge.getDestination()) > distance.get(edge
+                        .getSource()) + edge.getWeight()) {
+                    distance.put(
+                            edge.getDestination(),
+                            distance.get(edge.getSource()) + edge.getWeight());
+                    predecessors.put(edge.getDestination(), edge.getSource());
+
                     distanceChanged = true;
-
-                }
-            }
-            queue.add(edge);
-        }
-
-        while (!queue.isEmpty()) {
-            Edge edge = queue.remove();
-
-            visited.add(edge.getDestination());
-
-            for (Edge neighbour : neighbours(edge.getDestination())) {
-                if (!visited.contains(neighbour.getDestination())) {
-                    if (distance.get(neighbour.getDestination()) == null) {
-                        distance.put(
-                                neighbour.getDestination(),
-                                distance.get(edge.getDestination())
-                                        + neighbour.getWeight());
-                        predecessors.put(
-                                neighbour.getDestination(),
-                                edge.getDestination());
-                    }
-                    else {
-                        if (distance.get(neighbour.getDestination()) > distance
-                                .get(edge.getDestination())
-                                + neighbour.getWeight()) {
-                            distance.put(
-                                    neighbour.getDestination(),
-                                    distance.get(edge.getDestination())
-                                            + neighbour.getWeight());
-                            predecessors.put(
-                                    neighbour.getDestination(),
-                                    edge.getDestination());
-                        }
-                    }
                 }
             }
         }
@@ -118,17 +79,6 @@ public class BellManFordAlgorithm {
         if (distanceChanged && last) {
             throw new IllegalArgumentException("Negative weight cycle dected");
         }
-    }
-
-    private List<Edge> neighbours(Vertex vertex) {
-
-        List<Edge> neighbours = new ArrayList<Edge>();
-        for (Edge edge : edges) {
-            if (edge.getSource().equals(vertex)) {
-                neighbours.add(edge);
-            }
-        }
-        return neighbours;
     }
 
     public List<Vertex> path(Vertex destination) {
@@ -212,7 +162,7 @@ public class BellManFordAlgorithm {
 
         algorithm.execute(A);
 
-        List<Vertex> path = algorithm.path(B);
+        List<Vertex> path = algorithm.path(E);
 
         for (Vertex v : path) {
             System.out.println(v.getName());
