@@ -1,22 +1,22 @@
+import java.util.Stack;
+
 /**
  * Created by Anand on 9/23/2015.
  */
-public class Explorer {
+public class Explorer1 {
 
     public static int explore(int[] input1, int[] input2) {
         int paths = 0;
         int m = input1[0];
         int n = input1[1];
 
-        int[] pendingMoves = new int[2 * n];
-        int pendingMovesTop = -1;
+        Stack<Integer> pendingMoves = new Stack<Integer>();
+
         int position = 0;
         boolean allMovesExplored = false;
 
         do {
-            int nextRight = (position / n) * n + (position % n) + 1 < (m * n) ? (position / n)
-                    * n + (position % n) + 1
-                    : -1;
+            int nextRight = -1;
             int nextDown = ((position / n) + 1) * n + (position % n) < (m * n) ? ((position / n) + 1)
                     * n + (position % n)
                     : -1;
@@ -33,9 +33,9 @@ public class Explorer {
                     paths = paths + 1;
                 }
                 // try next pending move
-                if (pendingMovesTop >= 0) {
-                    position = pendingMoves[pendingMovesTop];
-                    pendingMovesTop--;
+                if (!pendingMoves.isEmpty()) {
+                    position = pendingMoves.pop();
+
                 }
                 else {
                     allMovesExplored = true;
@@ -43,10 +43,14 @@ public class Explorer {
                 break;
             case 1:
                 // move right
+                nextRight = (position / n) * n + (position % n) + 1 < (m * n) ? (position / n)
+                        * n + (position % n) + 1
+                        : -1;
+
                 if (nextRight == -1) {
-                    if (pendingMovesTop >= 0) {
-                        position = pendingMoves[pendingMovesTop];
-                        pendingMovesTop--;
+                    if (!pendingMoves.isEmpty()) {
+                        position = pendingMoves.pop();
+
                     }
                     else {
                         allMovesExplored = true;
@@ -59,9 +63,13 @@ public class Explorer {
                 break;
             case 2:
                 // move down
+                nextDown = ((position / n) + 1) * n + (position % n) < (m * n) ? ((position / n) + 1)
+                        * n + (position % n)
+                        : -1;
+
                 if (nextDown == -1) {
-                    if (pendingMovesTop >= 0) {
-                        position = pendingMoves[pendingMovesTop--];
+                    if (!pendingMoves.isEmpty()) {
+                        position = pendingMoves.pop();
 
                     }
                     else {
@@ -75,8 +83,8 @@ public class Explorer {
             case 3:
                 // move diagonally
                 if (nextDiagonally == -1) {
-                    if (pendingMovesTop >= 0) {
-                        position = pendingMoves[pendingMovesTop--];
+                    if (!pendingMoves.isEmpty()) {
+                        position = pendingMoves.pop();
 
                     }
                     else {
@@ -91,8 +99,8 @@ public class Explorer {
                 // move right and down
                 if (nextRight == -1) {
                     if (nextDown == -1) {
-                        if (pendingMovesTop >= 0) {
-                            position = pendingMoves[pendingMovesTop--];
+                        if (!pendingMoves.isEmpty()) {
+                            position = pendingMoves.pop();
 
                         }
                         else {
@@ -106,7 +114,7 @@ public class Explorer {
                 else {
                     position = nextRight;
                     if (nextDown != -1) {
-                        pendingMoves[++pendingMovesTop] = nextDown;
+                        pendingMoves.push(nextDown);
                     }
                 }
                 break;
@@ -114,8 +122,8 @@ public class Explorer {
                 // move right and diagonally
                 if (nextRight == -1) {
                     if (nextDiagonally == -1) {
-                        if (pendingMovesTop >= 0) {
-                            position = pendingMoves[pendingMovesTop--];
+                        if (!pendingMoves.isEmpty()) {
+                            position = pendingMoves.pop();
 
                         }
                         else {
@@ -129,7 +137,7 @@ public class Explorer {
                 else {
                     position = nextRight;
                     if (nextDiagonally != -1) {
-                        pendingMoves[++pendingMovesTop] = nextDiagonally;
+                        pendingMoves.push(nextDiagonally);
                     }
                 }
                 break;
@@ -137,8 +145,8 @@ public class Explorer {
                 // move down and diagonally
                 if (nextDown == -1) {
                     if (nextDiagonally == -1) {
-                        if (pendingMovesTop >= 0) {
-                            position = pendingMoves[pendingMovesTop--];
+                        if (!pendingMoves.isEmpty()) {
+                            position = pendingMoves.pop();
 
                         }
                         else {
@@ -152,7 +160,7 @@ public class Explorer {
                 else {
                     position = nextDown;
                     if (nextDiagonally != -1) {
-                        pendingMoves[++pendingMovesTop] = nextDiagonally;
+                        pendingMoves.push(nextDiagonally);
                     }
                 }
                 break;
@@ -161,8 +169,8 @@ public class Explorer {
                 if (nextRight == -1) {
                     if (nextDown == -1) {
                         if (nextDiagonally == -1) {
-                            if (pendingMovesTop >= 0) {
-                                position = pendingMoves[pendingMovesTop--];
+                            if (!pendingMoves.isEmpty()) {
+                                position = pendingMoves.pop();
 
                             }
                             else {
@@ -172,11 +180,11 @@ public class Explorer {
                         else {
                             position = nextDiagonally;
                             if (nextRight != -1) {
-                                pendingMoves[++pendingMovesTop] = nextRight;
+                                pendingMoves.push(nextRight);
                             }
 
                             if (nextDown != -1) {
-                                pendingMoves[++pendingMovesTop] = nextDown;
+                                pendingMoves.push(nextDown);
                             }
                         }
 
@@ -184,22 +192,22 @@ public class Explorer {
                     else {
                         position = nextDown;
                         if (nextRight != -1) {
-                            pendingMoves[++pendingMovesTop] = nextRight;
+                            pendingMoves.push(nextRight);
                         }
 
                         if (nextDiagonally != -1) {
-                            pendingMoves[++pendingMovesTop] = nextDiagonally;
+                            pendingMoves.push(nextDiagonally);
                         }
                     }
                 }
                 else {
                     position = nextRight;
                     if (nextDown != -1) {
-                        pendingMoves[++pendingMovesTop] = nextDown;
+                        pendingMoves.push(nextDown);
                     }
 
                     if (nextDiagonally != -1) {
-                        pendingMoves[++pendingMovesTop] = nextDiagonally;
+                        pendingMoves.push(nextDiagonally);
                     }
                 }
                 break;
@@ -216,7 +224,7 @@ public class Explorer {
     public static void main(String[] args) {
 
         long start = System.nanoTime();
-        System.out.println(Explorer.explore(new int[] { 4, 6 }, new int[] { 1,
+        System.out.println(Explorer1.explore(new int[] { 4, 6 }, new int[] { 1,
                 3, 0, 0, 0, 0, 0, 0, 4, 5, 1, 0, 0, 0, 0, 6, 7, 6, 0, 0, 0, 0,
                 5, 0 }));
         long end = System.nanoTime();
